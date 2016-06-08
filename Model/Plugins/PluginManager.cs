@@ -11,9 +11,10 @@ using WhereAreThem.Model.Models;
 namespace WhereAreThem.Model.Plugins {
     public class PluginManager {
         [ImportMany]
-        IEnumerable<Lazy<IPlugin, IPluginMetadata>> _importedPlugins;
+        private IEnumerable<Lazy<IPlugin, IPluginMetadata>> _importedPlugins;
 
-        private Dictionary<string, List<Lazy<IPlugin, IPluginMetadata>>> _plugins = new Dictionary<string, List<Lazy<IPlugin, IPluginMetadata>>>(StringComparer.OrdinalIgnoreCase);
+        private Dictionary<string, List<Lazy<IPlugin, IPluginMetadata>>> _plugins =
+            new Dictionary<string, List<Lazy<IPlugin, IPluginMetadata>>>(StringComparer.OrdinalIgnoreCase);
 
         public PluginManager() {
             CompositionContainer container = new CompositionContainer(new DirectoryCatalog("."));
@@ -34,16 +35,15 @@ namespace WhereAreThem.Model.Plugins {
             if (!_plugins.ContainsKey(ext))
                 return null;
 
-            Dictionary<string, string> new_descriptions = new Dictionary<string, string>();
-
+            Dictionary<string, string> newDescriptions = new Dictionary<string, string>();
             foreach (var p in _plugins[ext]) {
                 if (hasChanged || !descriptions.ContainsKey(p.Metadata.Id))
-                    new_descriptions.Add(p.Metadata.Id, p.Value.GetDescription(path));
+                    newDescriptions.Add(p.Metadata.Id, p.Value.GetDescription(path));
                 else
-                    new_descriptions.Add(p.Metadata.Id, descriptions[p.Metadata.Id]);
+                    newDescriptions.Add(p.Metadata.Id, descriptions[p.Metadata.Id]);
             }
 
-            return new_descriptions;
+            return newDescriptions;
         }
     }
 }
